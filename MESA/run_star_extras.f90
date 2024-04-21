@@ -112,8 +112,9 @@
              allocate(list(1))
              list(1) = element
          end if
-     end subroutine AddToList
-
+      end subroutine AddToList
+      
+      !DONE: To evaluate the function F for the differential equation da/dt = F(a)
       subroutine linspace(n, from, to, array)
          real(dp), intent(in) :: from, to
          integer, intent(in) :: n
@@ -171,7 +172,8 @@
          end do
 
       end subroutine hl_and_energy
-
+      
+      !DONE: To evaluate the MR15 expressions
       subroutine mr15(id, ierr)
          !star variables
          integer, intent(in) :: id
@@ -206,7 +208,8 @@
             fd_mr15(j) = fd_mr15_ratio(j)*fd_hl(j)
          end do
       end subroutine mr15
-
+      
+      !DONE: To evaluate the Eddington and Hypereddington accretion rates
       subroutine edd_and_hyper(n)         
          !subroutine variables
          integer :: k, n
@@ -218,7 +221,8 @@
             mdot_hyper(k) = 8.9*(1d-5)*((op_const/0.34)**(-0.73))*Msun/secyer
          end do
       end subroutine edd_and_hyper
-
+      
+      !DONE: To evaluate the Holgado accretion parametrisation
       subroutine hol_acc_par(n)     
          !subroutine variables
          integer :: k, n
@@ -297,7 +301,8 @@
          !evaluating the next value of a
          aout = a + dt*(k1 + 2*k2 + 2*k3 + k4)/6
       end subroutine rk4
-
+      
+      !DONE: To find the equatorial radius and beta secular
       subroutine Req_and_beta(e1, Req1, Rbar1, beta1)
          real(dp), intent(in) :: e1
          real(dp), intent(out) :: Req1, Rbar1, beta1
@@ -324,7 +329,8 @@
       !       beta_out(j) = 3*(1 - ((e_in(j)*sqrt(1-e_in(j)**2))/(asin(e_in(j)))))/(2*e_in(j)**2) - 1         
       !    end do      
       ! end subroutine omega_and_beta_vs_e
-
+      
+      !DONE: To evaluate the omega function and solve for the inverse
       subroutine omega_function(e1, M, omega1)
          !subroutine variables
          real(dp), intent(in) :: e1, M
@@ -336,7 +342,8 @@
          
          omega1 = sqrt(2*pi*standard_cgrav*rho_bar*( (sqrt(1-e1**2)*(3-2*e1**2)*asin(e1)/(e1**3)) - 3*(1-e1**2)/(e1**2) )/qn)
       end subroutine omega_function
-
+      
+      !DONE: To solve for the inverse of the omega function
       subroutine omega_func_solve_inverse(e_start, omega_val, tol, M, e_out)
          !subroutine variables
          real(dp), intent(in) :: e_start, omega_val, tol, M
@@ -359,7 +366,8 @@
 
          e_out = e1
       end subroutine omega_func_solve_inverse
-
+      
+      !DONE: To evaluate the beta function
       subroutine beta_func(e1, beta1)
          !subroutine variables
          real(dp), intent(in) :: e1
@@ -368,7 +376,7 @@
          beta1 = 3*(1 - ((e1*sqrt(1-e1**2))/(asin(e1))))/(2*e1**2) - 1
       end subroutine beta_func
 
-      !to evaluate the spin evolution and quadrupole moment evolution
+      !DONE: to evaluate the spin evolution and quadrupole moment evolution
       subroutine omega_and_q(id, ierr, M_next, M_acc_next, a_next_zone, Qmax_next, Qtb_next, Q_next, omega_next, Req_next, Rbar_next, beta_next, e_next, aa_next, b_next, mom_inert_next)
          !star variables
          integer, intent(in) :: id
@@ -494,29 +502,31 @@
             mom_inert = s%x_ctrl(46)                 !gm cm^2
 
             s%x_ctrl(19) = 2                         !to check for retries
-         else if (s%model_number == 3351) then 
-            print *, 'blaq'
-            a_curr  =  6.7202675798626758d12
-            M_ns  =  2.6481245677598265d33
-            M_acc  =  3.5394397314246373d30
-            Qmax  =  1.4240282282171865d38
-            Qtb  =  4.0017361680840237d40
-            Q  =  9.6660149013829673d37
-            omega  =  1.6148748790971920d3
-            Req  =  9.9978230993989506d5
-            Rbar  =  9.9978230993989506d5
-            beta  =  4.4764110268387114d-3
-            e  =  1.8177567016667656d-1
-            a  =  1.0908878350833382d6
-            b  =  9.0911216491666168d5
-            mom_inert  =  1.0679998647068851d45
+         ! else if (s%model_number == 3351) then (Only used when restarting - specific to the model restarting from, so needs to be changed accordingly)
+         !    print *, 'blaq'
+         !    a_curr  =  6.7202675798626758d12
+         !    M_ns  =  2.6481245677598265d33
+         !    M_acc  =  3.5394397314246373d30
+         !    Qmax  =  1.4240282282171865d38
+         !    Qtb  =  4.0017361680840237d40
+         !    Q  =  9.6660149013829673d37
+         !    omega  =  1.6148748790971920d3
+         !    Req  =  9.9978230993989506d5
+         !    Rbar  =  9.9978230993989506d5
+         !    beta  =  4.4764110268387114d-3
+         !    e  =  1.8177567016667656d-1
+         !    a  =  1.0908878350833382d6
+         !    b  =  9.0911216491666168d5
+         !    mom_inert  =  1.0679998647068851d45
 
-            h_val = 2*standard_cgrav*(omega**2)*Q/(D*(clight**4))
+         !    h_val = 2*standard_cgrav*(omega**2)*Q/(D*(clight**4))
             
-            if (s%x_ctrl(19) /= 3351) then
-               s%x_ctrl(19) = 3352                     !to check for retries
-            end if
+         !    if (s%x_ctrl(19) /= 3351) then
+         !       s%x_ctrl(19) = 3352                     !to check for retries
+         !    end if
          else 
+            !setting current values to the ones outputted from last timestep
+
             a_curr = s%x_ctrl(3)                     !cm
             M_ns = s%x_ctrl(13)                      !gm
             M_acc = s%x_ctrl(17)                     !gm
@@ -531,7 +541,7 @@
             a = s%x_ctrl(43)                         !a (cm)
             b = s%x_ctrl(45)                         !b (cm)
             mom_inert = s%x_ctrl(47)                 !moment of inertia (gm cm^2)
-            h_val = s%x_ctrl(49)                         !h
+            h_val = s%x_ctrl(49)                     !h
          endif
 
          !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -570,7 +580,8 @@
 
          call find_inbetween_value_index(s%R(1:s%nz), r1, r2, s%nz, rzones)
          nr = size(rzones)
-
+         
+         !setting initial signal value
          if (s%model_number == 1) then
             call Req_and_beta(e, Req, Rbar, beta)
             Qtb = sqrt((5*(clight**5)*mdot(azone)*sqrt(standard_cgrav*M_ns*Req))/(32*standard_cgrav*(omega**5)))
@@ -628,24 +639,11 @@
             M_acc_next = M_acc
 
          end if
-         ! print *, 'M_acc_next = ', M_acc_next
-
-         !print the current and next orbital seperation
-         
-         ! print *, 'a_next = ', a_next/Rsun
-         
-         ! call linspace(100000, e - 0.001, e + 0.001, e_arr)
-
-         ! call omega_and_beta_vs_e(M_ns_next, e_arr, omega_arr, beta_arr)
-         ! call find_closest_value_index(beta_arr, beta_sec, size(beta_arr), beta_sec_ind)
-         ! e_arr = e_arr(1:beta_sec_ind)
-         ! beta_arr = beta_arr(1:beta_sec_ind)
-         ! omega_arr = omega_arr(1:beta_sec_ind)    
-         ! print *, size(e_arr)
      
-
+         !finding the next quadrupole moment and spin frequency
          call omega_and_q(id, ierr, M_ns_next, M_acc_next, a_next_zone, Qmax_next, Qtb_next, Q_next, omega_next, Req_next, Rbar_next, beta_next, e_next, aa_next, b_next, mom_inert_next)
          
+         !finding the next signal strength
          h_next = 2*standard_cgrav*(omega_next**2)*Q_next/(D*(clight**4))
          !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
          ! SAVING RELEVANT VARIABLES
@@ -782,27 +780,6 @@
          s% data_for_extra_profile_header_items => data_for_extra_profile_header_items
 
       end subroutine extras_controls
-      
-      ! subroutine inject_energy(id, ierr)
-      !    integer, intent(in) :: id
-      !    integer :: ierr
-      !    integer :: k
-      !    integer :: k_end = 10
-      !    real(dp) :: e_extra
-      !    type (star_info), pointer :: s
-      !    ierr = 0
-      !    call star_ptr(id, s, ierr)
-      !    if (ierr /= 0) return
-         
-      !    e_extra = 0d0
-         
-      !    do k = 1, k_end
-      !       s% extra_heat(k)%val = e_extra
-      !    end do
-         
-      !    print *, 'Adding energy ', e_extra, 'from num zones k = 1 to ', k_end
-      
-      ! end subroutine inject_energy
       
       
       subroutine extras_startup(id, restart, ierr)
@@ -1074,33 +1051,6 @@
          do k = 1, s%nz
            vals(k,14) = f(k)
          end do
-
-         ! names(15) = 'omega_array'
-         ! do k = 1, s%nz 
-         !    if (k <= size(omega_arr)) then
-         !       vals(k,15) = omega_arr(k)
-         !    else
-         !       vals(k,15) = -1
-         !    end if
-         ! end do
-
-         ! names(16) = 'e_array'
-         ! do k = 1, s%nz 
-         !    if (k <= size(e_arr)) then
-         !       vals(k,16) = e_arr(k)
-         !    else
-         !       vals(k,16) = -1
-         !    end if
-         ! end do
-
-         ! names(17) = 'beta_array'
-         ! do k = 1, s%nz
-         !    if (k <= size(beta_arr)) then
-         !       vals(k,17) = beta_arr(k)
-         !    else
-         !       vals(k,17) = -1
-         !    end if
-         ! end do
 
          ierr = 0
          
